@@ -1,0 +1,14 @@
+@import '../../../../component-imports';
+
+.task-content {
+
+  :host.task-complete & {
+    color: $gray-500;
+    text-decoration: line-through;
+  }
+
+}
+
+.btn + .btn {
+  margin-left: ($spacer / 2);
+}

@@ -4,7 +4,7 @@ import { NOT_FOUND } from 'http-status-codes';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { Task } from './task.model';
+import { Task, TaskId, TaskData } from './task.model';
 
 @Injectable()
 export class TaskEndpoint {
@@ -21,8 +21,16 @@ export class TaskEndpoint {
       }));
   }
 
-  public addTask(task: Task): Observable<Task> {
+  public addTask(task: TaskData): Observable<Task> {
     return this.http.post<Task>('/api/task', task);
+  }
+
+  public updateTask(task: Partial<Task> & TaskId): Observable<Task> {
+    return this.http.patch<Task>(`/api/task/${task.id}`, task);
+  }
+
+  public deleteTask(task: Task): Observable<Task> {
+    return this.http.delete<Task>(`/api/task/${task.id}`);
   }
 
 }

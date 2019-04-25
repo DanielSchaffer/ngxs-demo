@@ -1,16 +1,18 @@
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { patch } from '@ngxs/store/operators';
+import { patch, removeItem, updateItem } from '@ngxs/store/operators';
 import { take, tap } from 'rxjs/operators';
-import { AuthService } from '../auth/auth.service';
 
+import { AuthService } from '../auth/auth.service';
 import { UserAuthorized } from '../auth/user-authorized.action';
 import { User } from '../auth/user.model';
 
 import { AddTask } from './add-task.action';
+import { DeleteTask } from './delete-task.action';
 import { GetTasks } from './get-tasks.action';
 import { ResetTasks } from './reset-tasks.action';
 import { TaskEndpoint } from './task.endpoint';
 import { Task } from './task.model';
+import { UpdateTask } from './update-task.action';
 
 export class TaskStateModel {
   public tasks: Task[];
@@ -67,6 +69,26 @@ export class TaskState implements NgxsOnInit {
       .pipe(tap(tasks => {
         ctx.setState(patch({
           tasks,
+        }));
+      }));
+  }
+
+  @Action(UpdateTask)
+  public updateTask(ctx: StateContext<TaskStateModel>, { payload }: UpdateTask) {
+    return this.taskEndpoint.updateTask(payload)
+      .pipe(tap((updatedTask: Task) => {
+        ctx.setState(patch({
+          tasks: updateItem(task => task.id === payload.id, updatedTask)
+        }));
+      }));
+  }
+
+  @Action(DeleteTask)
+  public deleteTask(ctx: StateContext<TaskStateModel>, { payload }: DeleteTask) {
+    return this.taskEndpoint.deleteTask(payload)
+      .pipe(tap((deletedTask: Task) => {
+        ctx.setState(patch({
+          tasks: removeItem<Task>(task => task.id === (deletedTask || payload).id)
         }));
       }));
   }

@@ -31,7 +31,6 @@ export class TaskCreateComponent {
       title: ['', Validators.required],
       description: [''],
       complete: [false],
-      hidden: [false],
     });
   }
 

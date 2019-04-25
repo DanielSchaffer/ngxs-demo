@@ -1,9 +1,9 @@
-import { Task } from './task.model';
+import { TaskData } from './task.model';
 
 export class AddTask {
 
   public static readonly type = '[Task] Add';
 
-  constructor(public payload: Task) {}
+  constructor(public payload: TaskData) {}
 
 }

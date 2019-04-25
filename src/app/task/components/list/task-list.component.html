@@ -1,16 +1,21 @@
+<div>
+  <label>
+    <input type="checkbox" [(ngModel)]="showComplete" />
+    Show Completed Tasks
+  </label>
+</div>
 <ng-container *ngIf="tasks$ | async; let tasks">
   <table *ngIf="tasks.length" class="table table-striped">
     <thead>
     <tr>
+      <th></th>
       <th>Title</th>
       <th>Description</th>
+      <th></th>
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let task of tasks">
-      <td>{{ task.title }}</td>
-      <td>{{ task.description }}</td>
-    </tr>
+    <tr *ngFor="let task of tasks" app-task-list-item [task]="task"></tr>
     </tbody>
   </table>
 </ng-container>

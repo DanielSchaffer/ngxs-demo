@@ -1,6 +1,11 @@
-export interface Task {
+export interface TaskId {
+  id: string;
+}
+
+export interface TaskData {
   title: string;
   description?: string;
   complete: boolean;
-  hidden: boolean;
 }
+
+export type Task = TaskData & TaskId;
