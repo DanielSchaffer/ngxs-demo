@@ -1,0 +1,16 @@
+<ng-container *ngIf="tasks$ | async; let tasks">
+  <table *ngIf="tasks.length" class="table table-striped">
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let task of tasks">
+      <td>{{ task.title }}</td>
+      <td>{{ task.description }}</td>
+    </tr>
+    </tbody>
+  </table>
+</ng-container>

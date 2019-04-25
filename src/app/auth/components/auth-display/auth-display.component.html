@@ -1,0 +1,4 @@
+<div class="col-12 d-flex justify-content-end align-items-center" *ngIf="user$ | async; let user">
+  <label>Logged in as <b>{{ user.username }}</b></label>
+  <button type="button" class="btn btn-danger" (click)="logOut()">Sign Out</button>
+</div>
