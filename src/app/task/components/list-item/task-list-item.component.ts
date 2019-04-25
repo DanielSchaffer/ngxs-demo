@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, HostListener, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngxs/store';
 
@@ -56,7 +56,11 @@ export class TaskListItemComponent implements OnInit {
     this._editMode = true;
   }
 
+  @HostListener('keyup.enter')
   public completeEdit(): void {
+    if (!this.editMode) {
+      return;
+    }
     if (this.editForm.dirty) {
       this.store.dispatch(new UpdateTask(this.task.id, this.getDirtyValues()));
       // this.store.selectOnce(TaskState.getTasks)

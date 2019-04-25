@@ -2,25 +2,25 @@
   <td>
     <button *ngIf="!task.complete && !editMode" type="button" class="btn btn-success" (click)="markComplete()">✓</button>
     <button *ngIf="task.complete && !editMode" type="button" class="btn btn-warning" (click)="markIncomplete()">!</button>
-    <button type="button" class="btn btn-outline-warning" (click)="startEdit()">✎</button>
+    <button *ngIf="!editMode" type="button" class="btn btn-outline-warning" (click)="startEdit()">✎</button>
   </td>
-  <td class="task-content">
-    <ng-container *ngIf="!editMode">
-      {{ task.title }}
-    </ng-container>
-    <ng-container *ngIf="editMode">
-      <input type="text" formControlName="title" #title (keyup.enter)="completeEdit()">
+  <ng-container *ngIf="editMode">
+    <td class="task-content">
+      <input type="text" formControlName="title" #title>
       <div class="alert alert-danger" *ngIf="editForm.controls.title.invalid && (editForm.controls.title.dirty || editForm.controls.title.touched)">Title is required</div>
-    </ng-container>
-  </td>
-  <td class="task-content">
-    <ng-container *ngIf="!editMode">
+    </td>
+    <td class="task-content">
+      <input type="text" formControlName="description">
+    </td>
+  </ng-container>
+  <ng-container *ngIf="!editMode">
+    <td class="task-content">
+      {{ task.title }}
+    </td>
+    <td class="task-content">
       {{ task.description }}
-    </ng-container>
-    <ng-container *ngIf="editMode">
-      <input type="text" formControlName="description" (keyup.enter)="completeEdit()">
-    </ng-container>
-  </td>
+    </td>
+  </ng-container>
   <td>
     <button *ngIf="!editMode" type="button" class="btn btn-danger" (click)="delete()">&times;</button>
     <button *ngIf="editMode" type="button" class="btn btn-outline-secondary" (click)="cancelEdit()">∅</button>
