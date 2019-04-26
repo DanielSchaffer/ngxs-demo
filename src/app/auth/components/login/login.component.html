@@ -7,7 +7,7 @@
         <div class="alert alert-danger" *ngIf="loginForm.controls.username.invalid && (loginForm.controls.username.dirty || loginForm.controls.username.touched)">User Name is required</div>
       </div>
       <div class="form-group">
-        <button type="button"
+        <button type="submit"
                 (click)="login(loginForm)"
                 class="btn btn-primary"
                 [disabled]="loginForm.pristine || loginForm.invalid">Sign In</button>
