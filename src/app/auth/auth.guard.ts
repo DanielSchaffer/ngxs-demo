@@ -12,7 +12,7 @@ export class AuthGuard implements CanActivateChild {
   constructor(private store: Store) {}
 
   public canActivateChild(route: ActivatedRouteSnapshot, routerState: RouterStateSnapshot): Observable<boolean> {
-    return this.store.select(state => state.auth.user)
+    return this.store.selectOnce(state => state.auth.user)
       .pipe(map(user => {
         if (user === undefined) {
           this.store.dispatch(getLoginRedirectAction(routerState.url));
