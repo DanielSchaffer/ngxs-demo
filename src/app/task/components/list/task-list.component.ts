@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -16,10 +16,9 @@ import { TaskListPrefsState, TaskListPrefsStateModel } from './task-list-prefs.s
 export class TaskListComponent {
 
   public tasks$: Observable<Task[]>;
-  public prefs$: Observable<TaskListPrefsStateModel>;
+  @Select(TaskListPrefsState.getUserPrefs()) public prefs$: Observable<TaskListPrefsStateModel>;
 
   constructor(private store: Store) {
-    this.prefs$ = this.store.select(TaskListPrefsState.getPrefs);
     this.tasks$ = combineLatest(this.store.select(TaskState.getTasks), this.prefs$)
       .pipe(map(([tasks, prefs]) => {
         if (!tasks) {

@@ -66,7 +66,6 @@ export class TaskListItemComponent implements OnInit {
     }
     if (this.editForm.dirty) {
       this.store.dispatch(new UpdateTask(this.task.id, this.getDirtyValues()));
-      // this.store.selectOnce(TaskState.getTasks)
     }
     this._editMode = false;
   }

@@ -2,7 +2,6 @@ import { Component, HostBinding } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 
 import { TaskHistoryEntry } from '../../../task-history-entry.model';
 import { TaskHistoryState } from '../../../task-history.state';

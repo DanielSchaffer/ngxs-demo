@@ -1,6 +1,6 @@
-import * as bodyParser  from 'body-parser';
-import * as express     from 'express';
-import * as uuid        from 'uuid';
+import * as bodyParser from 'body-parser';
+import * as express from 'express';
+import * as uuid from 'uuid';
 
 import { Application, Handler, NextFunction, Request, Response } from 'express-serve-static-core';
 
@@ -155,6 +155,7 @@ export class RestApi {
   }
 
   private getChildResources(req: RestApiRequest): any[] {
+    // @ts-ignore
     return [...this.data.keys()]
       .filter(key => {
         if (!key.startsWith(req.resourceKey)) {
