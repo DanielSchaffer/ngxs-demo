@@ -6,6 +6,8 @@ import { NgxsModule } from '@ngxs/store';
 import { TaskCreateComponent } from './components/create/task-create.component';
 import { TaskListComponent } from './components/list/task-list.component';
 import { TaskView } from './components/view/task.view';
+import { TaskHistoryEndpoint } from './task-history.endpoint';
+import { TaskHistoryState } from './task-history.state';
 import { TaskRoutingModule } from './task-routing.module';
 import { TaskEndpoint } from './task.endpoint';
 import { TasksResolver } from './tasks.resolver';
@@ -24,12 +26,14 @@ import { TaskListItemComponent } from './components/list-item/task-list-item.com
     ReactiveFormsModule,
     NgxsModule.forFeature([
       TaskState,
+      TaskHistoryState,
     ]),
     TaskRoutingModule,
     FormsModule,
   ],
   providers: [
     TaskEndpoint,
+    TaskHistoryEndpoint,
     TasksResolver,
   ]
 })

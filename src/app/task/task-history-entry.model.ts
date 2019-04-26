@@ -1,4 +1,4 @@
-import { Task } from '../task.model';
+import { Task } from './task.model';
 
 export interface TaskHistoryEntryId {
   id: string;

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngxs/store';
 
 import { DeleteTask } from '../../delete-task.action';
+import { TASK_DETAIL_ROOT_PATH } from '../../detail/task-detail.routing-constants';
 import { Task } from '../../task.model';
 import { UpdateTask } from '../../update-task.action';
 
@@ -13,6 +14,8 @@ import { UpdateTask } from '../../update-task.action';
   styleUrls: ['./task-list-item.component.scss']
 })
 export class TaskListItemComponent implements OnInit {
+
+  public readonly TASK_DETAIL_ROOT_PATH = TASK_DETAIL_ROOT_PATH;
 
   @Input()
   public task: Task;

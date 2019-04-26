@@ -39,6 +39,7 @@ export class RestApi {
     function resourceKey(req: RestApiRequest, res: Response, next: NextFunction): void {
       req.resourceKey = RestApi.getResourceKey(req.user, req.resourcePath);
       req.resourceId = req.resourcePath[req.resourcePath.length - 1];
+      console.log('resourceKey', req.resourcePath, req.resourceKey);
       next();
     }
   ];

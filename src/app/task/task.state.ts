@@ -1,5 +1,6 @@
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { append, patch, removeItem, updateItem } from '@ngxs/store/operators';
+import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
@@ -32,6 +33,10 @@ export class TaskState implements NgxsOnInit {
   @Selector()
   public static getTasks(state: TaskStateModel): Task[] {
     return state.tasks;
+  }
+
+  public static getTask(taskId: string): (state: TaskStateModel) => Task {
+    return (state: TaskStateModel) => state.tasks.find(task => task.id === taskId);
   }
 
   constructor(private taskEndpoint: TaskEndpoint, private authService: AuthService) {}

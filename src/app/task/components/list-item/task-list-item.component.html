@@ -15,7 +15,7 @@
   </ng-container>
   <ng-container *ngIf="!editMode">
     <td class="task-content">
-      {{ task.title }}
+      <a [routerLink]="[TASK_DETAIL_ROOT_PATH, task.id]">{{ task.title }}</a>
     </td>
     <td class="task-content">
       {{ task.description }}
