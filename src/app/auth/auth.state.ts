@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Navigate } from '@ngxs/router-plugin';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
-import { AuthRoutingConstants } from './auth.routing-constants';
+import { getLoginRedirectAction } from './auth.routing-constants';
 import { LoginAttempt } from './login-attempt.model';
 import { Login } from './login.action';
 import { Logout } from './logout.action';
@@ -28,10 +28,7 @@ export class AuthState {
     return state.user;
   }
 
-  constructor(
-    private router: Router,
-    private routingContants: AuthRoutingConstants,
-  ) {}
+  constructor(private router: Router) {}
 
   @Action(Login)
   public login(ctx: StateContext<AuthStateModel>, { payload }: Login) {
@@ -61,7 +58,7 @@ export class AuthState {
   }
 
   private redirectToLogin(ctx: StateContext<AuthStateModel>) {
-    ctx.dispatch(new Navigate(this.routingContants.getLoginUrl(this.router.routerState.snapshot.url)));
+    ctx.dispatch(getLoginRedirectAction(this.router.routerState.snapshot.url));
   }
 
 }

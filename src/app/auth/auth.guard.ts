@@ -1,21 +1,22 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivateChild, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivateChild, RouterStateSnapshot } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { AuthRoutingConstants } from './auth.routing-constants';
+import { getLoginRedirectAction } from './auth.routing-constants';
 
 @Injectable()
 export class AuthGuard implements CanActivateChild {
 
-  constructor(private store: Store, private routingConstants: AuthRoutingConstants) {}
+  constructor(private store: Store) {}
 
-  public canActivateChild(route: ActivatedRouteSnapshot, routerState: RouterStateSnapshot): Observable<boolean | UrlTree> {
+  public canActivateChild(route: ActivatedRouteSnapshot, routerState: RouterStateSnapshot): Observable<boolean> {
     return this.store.select(state => state.auth.user)
       .pipe(map(user => {
         if (user === undefined) {
-          return this.routingConstants.getLoginUrl(routerState.url);
+          this.store.dispatch(getLoginRedirectAction(routerState.url));
+          return false;
         }
         return true;
       }));

@@ -5,7 +5,6 @@ import { NgxsModule } from '@ngxs/store';
 
 import { AuthRoutingModule } from './auth-routing.module';
 import { AuthGuard } from './auth.guard';
-import { AuthRoutingConstants } from './auth.routing-constants';
 import { AuthService } from './auth.service';
 import { AuthState } from './auth.state';
 import { LoginComponent } from './components/login/login.component';
@@ -26,7 +25,6 @@ import { AuthDisplayComponent } from './components/auth-display/auth-display.com
   ],
   providers: [
     AuthGuard,
-    AuthRoutingConstants,
     AuthService,
   ],
   exports: [
