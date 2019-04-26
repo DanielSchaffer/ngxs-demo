@@ -1,5 +1,6 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Navigate } from '@ngxs/router-plugin';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
 import { AuthRoutingConstants } from './auth.routing-constants';
@@ -29,7 +30,6 @@ export class AuthState {
 
   constructor(
     private router: Router,
-    private ngZone: NgZone,
     private routingContants: AuthRoutingConstants,
   ) {}
 
@@ -42,7 +42,7 @@ export class AuthState {
 
     ctx.dispatch(new UserAuthorized(user));
 
-    this.redirectToOriginalPath(payload);
+    this.redirectToOriginalPath(ctx, payload);
   }
 
   @Action(Logout)
@@ -51,19 +51,17 @@ export class AuthState {
       user: undefined,
     });
 
-    this.redirectToLogin();
+    this.redirectToLogin(ctx);
   }
 
-  private redirectToOriginalPath(login: LoginAttempt) {
+  private redirectToOriginalPath(ctx: StateContext<AuthStateModel>, login: LoginAttempt) {
     if (login.originalPath) {
-      // TODO: replace with @ngxs/router-plugin
-      this.ngZone.run(() => this.router.navigateByUrl(login.originalPath));
+      ctx.dispatch(new Navigate([login.originalPath]));
     }
   }
 
-  private redirectToLogin() {
-    // TODO: replace with @ngxs/router-plugin
-    this.ngZone.run(() => this.router.navigateByUrl(this.routingContants.getLoginUrl(this.router.routerState.snapshot.url)));
+  private redirectToLogin(ctx: StateContext<AuthStateModel>) {
+    ctx.dispatch(new Navigate(this.routingContants.getLoginUrl(this.router.routerState.snapshot.url)));
   }
 
 }
