@@ -22,7 +22,7 @@ export class TaskEndpoint {
   }
 
   public getTask(taskId: TaskId): Observable<Task> {
-    return this.http.get<Task>(`/api/task/${taskId}`);
+    return this.http.get<Task>(`/api/task/${taskId.id}`);
   }
 
   public addTask(task: TaskData): Observable<Task> {

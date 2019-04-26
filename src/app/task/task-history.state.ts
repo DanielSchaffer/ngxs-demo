@@ -10,24 +10,28 @@ import { TaskHistoryEndpoint } from './task-history.endpoint';
 import { TaskUpdated } from './task-updated.action';
 
 export class TaskHistoryStateModel {
-  public history: { [taskId: string]: TaskHistoryEntry[] };
+  public entriesByTaskId: { [taskId: string]: TaskHistoryEntry[] };
+}
+
+interface GlobalState {
+  taskHistory: TaskHistoryStateModel;
 }
 
 @State<TaskHistoryStateModel>({
   name: 'taskHistory',
   defaults: {
-    history: {},
+    entriesByTaskId: {},
   },
 })
 export class TaskHistoryState {
 
   @Selector()
   public static getHistory(state: TaskHistoryStateModel): { [taskId: string]: TaskHistoryEntry[] } {
-    return state.history;
+    return state.entriesByTaskId;
   }
 
-  public static getTaskHistory(taskId: string): (state: TaskHistoryStateModel) => TaskHistoryEntry[] {
-    return (state: TaskHistoryStateModel) => state.history[taskId];
+  public static getTaskHistory(taskId: string): ({ taskHistory }: GlobalState) => TaskHistoryEntry[] {
+    return ({ taskHistory }: GlobalState) => taskHistory.entriesByTaskId[taskId];
   }
 
   constructor(private taskHistoryEndpoint: TaskHistoryEndpoint) {}
@@ -52,8 +56,8 @@ export class TaskHistoryState {
     return this.taskHistoryEndpoint.getList(payload)
       .pipe(tap(history => {
         ctx.setState(patch({
-          history: {
-            [payload.id]: history,
+          entriesByTaskId: {
+            [payload]: history,
           },
         }));
       }));

@@ -31,6 +31,7 @@ import { AuthModule } from './auth/auth.module';
     NgxsStoragePluginModule.forRoot({
       key: [
         'auth',
+        'taskListPrefs',
       ],
     }),
 

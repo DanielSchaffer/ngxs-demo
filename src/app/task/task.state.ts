@@ -1,6 +1,6 @@
+import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { append, patch, removeItem, updateItem } from '@ngxs/store/operators';
-import { Observable } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
@@ -22,12 +22,17 @@ export class TaskStateModel {
   public tasks: Task[];
 }
 
+interface GlobalState {
+  task: TaskStateModel;
+}
+
 @State<TaskStateModel>({
   name: 'task',
   defaults: {
     tasks: [],
   },
 })
+@Injectable()
 export class TaskState implements NgxsOnInit {
 
   @Selector()
@@ -35,8 +40,10 @@ export class TaskState implements NgxsOnInit {
     return state.tasks;
   }
 
-  public static getTask(taskId: string): (state: TaskStateModel) => Task {
-    return (state: TaskStateModel) => state.tasks.find(task => task.id === taskId);
+  public static getTask(taskId: string): ({ task }: GlobalState) => Task {
+    return ({ task }: GlobalState) => {
+      return task.tasks.find(taskItem => taskItem.id === taskId);
+    };
   }
 
   constructor(private taskEndpoint: TaskEndpoint, private authService: AuthService) {}

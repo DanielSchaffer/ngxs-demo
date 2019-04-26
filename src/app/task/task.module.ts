@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxsModule } from '@ngxs/store';
 
 import { TaskCreateComponent } from './components/create/task-create.component';
+import { TaskListPrefsState } from './components/list/task-list-prefs.state';
 import { TaskListComponent } from './components/list/task-list.component';
 import { TaskView } from './components/view/task.view';
 import { TaskHistoryEndpoint } from './task-history.endpoint';
@@ -27,6 +28,7 @@ import { TaskListItemComponent } from './components/list-item/task-list-item.com
     NgxsModule.forFeature([
       TaskState,
       TaskHistoryState,
+      TaskListPrefsState,
     ]),
     TaskRoutingModule,
     FormsModule,

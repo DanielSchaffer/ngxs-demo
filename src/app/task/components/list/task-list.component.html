@@ -1,6 +1,6 @@
-<div>
+<div *ngIf="prefs$ | async; let prefs">
   <label>
-    <input type="checkbox" [(ngModel)]="showComplete" />
+    <input type="checkbox" (change)="setShowComplete(!prefs.showComplete)" [checked]="prefs.showComplete" />
     Show Completed Tasks
   </label>
 </div>

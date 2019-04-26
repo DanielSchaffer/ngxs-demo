@@ -9,8 +9,8 @@ export class TaskHistoryEndpoint {
 
   constructor(private http: HttpClient) {}
 
-  public getList(taskId: TaskHistoryEntryId): Observable<TaskHistoryEntry[]> {
-    return this.http.get<TaskHistoryEntry[]>(`/api/task/${taskId.id}/history`);
+  public getList(taskId: string): Observable<TaskHistoryEntry[]> {
+    return this.http.get<TaskHistoryEntry[]>(`/api/task/${taskId}/history`);
   }
 
   public addEntry(entry: TaskHistoryEntryData): Observable<TaskHistoryEntry> {

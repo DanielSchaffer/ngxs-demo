@@ -1,14 +1,22 @@
+<nav>
+  <ol class="breadcrumb">
+    <li>&gt;</li>
+    <li class="breadcrumb-item">
+      <a [routerLink]="['/']">Tasks</a>
+    </li>
+  </ol>
+</nav>
 
 <div class="card" *ngIf="task$ |async; let task">
 
   <div class="card-header">
     <h2 class="card-title">{{ task.title }}</h2>
-    <h3 class="card-subtitle" *ngIf="task.description">{{ task.description }}</h3>
+    <p class="card-text" *ngIf="task.description">{{ task.description }}</p>
   </div>
 
   <div class="card-body">
-    <h4>Task History</h4>
-    <table *ngIf="history$ | async; let history">
+    <h3>Task History</h3>
+    <table *ngIf="history$ | async; let history" class="table table-striped">
       <thead>
       <tr>
         <th>Date</th>
@@ -18,9 +26,9 @@
       </thead>
       <tbody>
       <tr *ngFor="let entry of history">
-        <td>{{ entry.ts | date }}</td>
+        <td>{{ entry.ts | date:'medium' }}</td>
         <td>{{ entry.action }}</td>
-        <td>{{ entry.changes | json }}</td>
+        <td><pre><code>{{ entry.change | cleanChanges | json }}</code></pre></td>
       </tr>
       </tbody>
     </table>

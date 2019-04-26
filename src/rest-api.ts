@@ -4,7 +4,7 @@ import * as uuid        from 'uuid';
 
 import { Application, Handler, NextFunction, Request, Response } from 'express-serve-static-core';
 
-import { chain, extend, isEmpty, find } from 'lodash';
+import { extend, isEmpty, find } from 'lodash';
 
 const KEY_USER_SUFFIX = ':::';
 const KEY_PATH_SEPARATOR = '::';
@@ -39,12 +39,12 @@ export class RestApi {
     function resourceKey(req: RestApiRequest, res: Response, next: NextFunction): void {
       req.resourceKey = RestApi.getResourceKey(req.user, req.resourcePath);
       req.resourceId = req.resourcePath[req.resourcePath.length - 1];
-      console.log('resourceKey', req.resourcePath, req.resourceKey);
       next();
     }
   ];
 
   private static addResourceLink(req: RestApiRequest, resource: any, resourcePath: string[]) {
+    // tslint:disable-next-line:variable-name
     const _links: any = {
       self: `${req.protocol}://${req.get('host')}${req.baseUrl}/${resourcePath.join('/')}`
     };
@@ -52,7 +52,7 @@ export class RestApi {
   }
 
   private static getChildResourcePattern(req: RestApiRequest): RegExp {
-    return new RegExp(`^${RestApi.getResourceKey(req.user, req.resourcePath.concat(['[\\w-]+']))}`);
+    return new RegExp(`^${RestApi.getResourceKey(req.user, req.resourcePath.concat(['[\\w-]+']))}(?!${KEY_PATH_SEPARATOR})`);
   }
 
   constructor(private app: Application) {
@@ -65,8 +65,9 @@ export class RestApi {
     router.use(bodyParser.json());
 
     router.get(ROUTE_PATH, this.middleware, (req: RestApiRequest, res: Response) => {
-      if (this.data[req.resourceKey]) {
-        res.json(RestApi.addResourceLink(req, this.data[req.resourceKey], req.resourcePath));
+      const resource = this.data.get(req.resourceKey);
+      if (resource) {
+        return res.json(RestApi.addResourceLink(req, resource, req.resourcePath));
       }
 
       const resources = this.getChildResources(req);
@@ -84,17 +85,17 @@ export class RestApi {
 
       req.body.id = uuid();
       const key = `${req.resourceKey}::${req.body.id}`;
-      this.data[key] = req.body;
+      this.data.set(key, req.body);
 
       res.status(201).json(RestApi.addResourceLink(req, req.body, req.resourcePath.concat([req.body.id])));
     });
 
     router.put(ROUTE_PATH, this.middleware, RestApi.checkBody, this.checkChildResources, (req: RestApiRequest, res: Response) => {
       req.body.id = req.resourcePath[req.resourcePath.length - 1];
-      if (!this.data[req.resourceKey]) {
+      if (!this.data.has(req.resourceKey)) {
         res.status(201);
       }
-      this.data[req.resourceKey] = req.body;
+      this.data.set(req.resourceKey, req.body);
       res.json(RestApi.addResourceLink(req, req.body, req.resourcePath));
     });
 
@@ -103,15 +104,16 @@ export class RestApi {
     });
 
     router.delete(ROUTE_PATH, this.middleware, (req: RestApiRequest, res: Response) => {
-      if (this.data[req.resourceKey]) {
-        delete this.data[req.resourceKey];
-        return res.json(req.resource);
+      const resource = this.data.get(req.resourceKey);
+      if (resource) {
+        this.data.delete(req.resourceKey);
+        return res.json(resource);
       }
 
       const resources: any[] = this.getChildResources(req);
       if (resources.length) {
-        resources.forEach(resource => {
-          delete this.data[RestApi.getResourceKey(req.user, req.resourcePath.concat([resource.id]))];
+        resources.forEach(childResource => {
+          this.data.delete(RestApi.getResourceKey(req.user, req.resourcePath.concat([childResource.id])));
         });
         return res.json(resources);
       }
@@ -135,7 +137,7 @@ export class RestApi {
   }
 
   private checkResource(req: RestApiRequest, res: Response, next: NextFunction): void {
-    const resource = this.data[req.resourceKey];
+    const resource = this.data.get(req.resourceKey);
     if (!resource) {
       return res.status(404).end();
     }
@@ -153,10 +155,14 @@ export class RestApi {
   }
 
   private getChildResources(req: RestApiRequest): any[] {
-    const pattern = RestApi.getChildResourcePattern(req);
-    return chain(Object.keys(this.data))
-      .filter(key => pattern.test(key))
-      .map(key => RestApi.addResourceLink(req, this.data[key], req.resourcePath.concat([this.data[key].id])))
-      .value();
+    return [...this.data.keys()]
+      .filter(key => {
+        if (!key.startsWith(req.resourceKey)) {
+          return false;
+        }
+        const parts = key.substring(req.resourceKey.length + KEY_PATH_SEPARATOR.length).split(KEY_PATH_SEPARATOR);
+        return parts.length === 1;
+      })
+      .map(key => RestApi.addResourceLink(req, this.data.get(key), req.resourcePath.concat([this.data.get(key).id])));
   }
 }
