@@ -1,5 +1,5 @@
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { patch, removeItem, updateItem } from '@ngxs/store/operators';
+import { append, patch, removeItem, updateItem } from '@ngxs/store/operators';
 import { take, tap } from 'rxjs/operators';
 
 import { AuthService } from '../auth/auth.service';
@@ -8,8 +8,11 @@ import { User } from '../auth/user.model';
 
 import { AddTask } from './add-task.action';
 import { DeleteTask } from './delete-task.action';
+import { GetTask } from './get-task.action';
 import { GetTasks } from './get-tasks.action';
 import { ResetTasks } from './reset-tasks.action';
+import { TaskAdded } from './task-added.action';
+import { TaskUpdated } from './task-updated.action';
 import { TaskEndpoint } from './task.endpoint';
 import { Task } from './task.model';
 import { UpdateTask } from './update-task.action';
@@ -60,6 +63,25 @@ export class TaskState implements NgxsOnInit {
         ctx.setState(patch({
           tasks: [...state.tasks, addedTask],
         }));
+        ctx.dispatch(new TaskAdded(addedTask));
+      }));
+  }
+
+  @Action(GetTask)
+  public getTask(ctx: StateContext<TaskStateModel>, { payload }: GetTask) {
+    return this.taskEndpoint.getTask(payload)
+      .pipe(tap(fetchedTask => {
+        const state = ctx.getState();
+        const existing = state.tasks.find(task => task.id === fetchedTask.id);
+        if (existing) {
+          ctx.setState(patch({
+            tasks: updateItem(task => task === existing, fetchedTask),
+          }));
+        } else {
+          ctx.setState(patch({
+            tasks: append([fetchedTask]),
+          }));
+        }
       }));
   }
 
@@ -80,6 +102,7 @@ export class TaskState implements NgxsOnInit {
         ctx.setState(patch({
           tasks: updateItem(task => task.id === payload.id, updatedTask)
         }));
+        ctx.dispatch(new TaskUpdated(payload));
       }));
   }
 
